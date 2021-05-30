@@ -32,8 +32,8 @@ export const config: VendureConfig = {
     },
     authOptions: {
         superadminCredentials: {
-            identifier: 'superadmin',
-            password: 'superadmin',
+            identifier: <string>process.env.SUPERADMIN_IDENTIFIER,
+            password: <string>process.env.SUPERADMIN_PASSWORD,
         },
     },
     dbConnectionOptions: {
@@ -59,25 +59,32 @@ export const config: VendureConfig = {
         DefaultJobQueuePlugin,
         DefaultSearchPlugin,
         EmailPlugin.init({
-            devMode: true,
-            outputPath: path.join(__dirname, '../static/email/test-emails'),
-            route: 'mailbox',
             handlers: defaultEmailHandlers,
             templatePath: path.join(__dirname, '../static/email/templates'),
             globalTemplateVars: {
                 // The following variables will change depending on your storefront implementation
-                fromAddress: '"example" <noreply@example.com>',
-                verifyEmailAddressUrl: 'http://localhost:8080/verify',
-                passwordResetUrl: 'http://localhost:8080/password-reset',
-                changeEmailAddressUrl: 'http://localhost:8080/verify-email-address-change'
+                fromAddress: '"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>',
+                verifyEmailAddressUrl: 'http://localhost:4201/account/verify',
+                passwordResetUrl: 'http://localhost:4201/account/reset-password',
+                changeEmailAddressUrl: 'http://localhost:4201/account/change-email-address'
             },
+            transport: {
+                type: 'smtp',
+                host: 'smtp.sendgrid.net',
+                port: 465,
+                secure: true, // true for 465, false for other ports
+                auth: {
+                    user: <string>process.env.SMTP_USER,
+                    pass: <string>process.env.SMTP_PASSWORD
+                }
+            }
         }),
         AdminUiPlugin.init({
             route: 'admin',
             port: 3002,
         }),
-        BraintreePlugin,
-    ],
+        BraintreePlugin
+    ]
 };
 
 function getMigrationsPath() {
