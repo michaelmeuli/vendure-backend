@@ -24,6 +24,7 @@
     "@vendure/testing": "^1.0.1",
     "better-sqlite3": "7.4.0",
     "braintree": "^3.4.0",
+    "pg": "^8.6.0",
     "typescript": "4.1.5"
   },
   "devDependencies": {

@@ -9,6 +9,7 @@ import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
 
+import fs from 'fs';
 import { BraintreePlugin } from './plugins/braintree/braintree-plugin';
 
 export const config: VendureConfig = {
@@ -36,11 +37,15 @@ export const config: VendureConfig = {
         },
     },
     dbConnectionOptions: {
-        type: 'better-sqlite3',
+        type: 'postgres',
         synchronize: true, // turn this off for production
         logging: false,
-        database: path.join(__dirname, '../vendure.sqlite'),
-        migrations: [path.join(__dirname, '../migrations/*.ts')],
+        database: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: <string>process.env.DB_PASSWORD,
+        migrations: [getMigrationsPath()],
     },
     paymentOptions: {
         paymentMethodHandlers: [dummyPaymentHandler],
@@ -74,3 +79,12 @@ export const config: VendureConfig = {
         BraintreePlugin,
     ],
 };
+
+function getMigrationsPath() {
+    const devMigrationsPath = path.join(__dirname, '../migrations');
+    const distMigrationsPath = path.join(__dirname, 'migrations');
+
+    return fs.existsSync(distMigrationsPath)
+        ? path.join(distMigrationsPath, '*.js')
+        : path.join(devMigrationsPath, '*.ts');
+}
