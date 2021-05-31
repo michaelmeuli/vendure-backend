@@ -11,5 +11,5 @@
     "outDir": "./dist",
     "baseUrl": "./"
   },
-  "exclude": ["node_modules", "migration.ts"]
+  "exclude": ["node_modules", "migration.ts", "populate.ts", "data/**"]
 }
