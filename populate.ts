@@ -5,7 +5,7 @@ import { clearAllTables, populateCustomers } from '@vendure/testing';
 import { config } from './src/vendure-config';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 
-import { initialData } from './data/yl-initial-data';
+import { initialData } from '../vendure-data/yl-initial-data';
 
 // tslint:disable:no-console
 
@@ -22,7 +22,7 @@ if (require.main === module) {
                 requireVerification: false,
             },
             importExportOptions: {
-                importAssetsDir: 'data/images',
+                importAssetsDir: '../vendure-data/images',
             },
             customFields: {},
             plugins: config.plugins!.filter(plugin => plugin !== AdminUiPlugin),
@@ -33,7 +33,7 @@ if (require.main === module) {
             populate(
                 () => bootstrap(populateConfig),
                 initialData,
-                'data/products.csv'
+                '../vendure-data/products.csv'
             ),
         )
         .then(async app => {
