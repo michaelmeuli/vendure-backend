@@ -17,7 +17,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
     .filter(
         event =>
-            event.toState === 'Created' && event.payment.method === 'swiss-qr-invoice'  // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>) 
+            event.toState === 'Authorized' && event.payment.method === 'swiss-qr-invoice'  // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>) 
     )
     .loadData(async context => {
         const shippingMethods: ShippingMethod[] = [];  
