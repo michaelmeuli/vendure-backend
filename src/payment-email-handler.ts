@@ -23,7 +23,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
   .on(PaymentStateTransitionEvent)
   .filter(
     event =>
-      event.toState === 'Authorized' && event.payment.method === 'swiss-qr-invoice'  // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
+      event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice'  // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
   )
   .setAttachments(async (event) => {
 
@@ -236,6 +236,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     ];
   })
   .setRecipient(event => event.order.customer!.emailAddress)
-  .setFrom(`{{ fromAddress }}`)
-  .setSubject(`Order confirmation for #{{ order.code }}`)
+  .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
+  .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
   .setTemplateVars(event => ({ order: event.order }));
