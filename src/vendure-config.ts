@@ -11,6 +11,7 @@ import path from 'path';
 
 import fs from 'fs';
 import { BraintreePlugin } from './plugins/braintree/braintree-plugin';
+import { SwissQrInvoicePlugin } from './plugins/swiss-qr-invoice/swiss-qr-invoice-plugin';
 
 export const config: VendureConfig = {
     apiOptions: {
@@ -83,7 +84,8 @@ export const config: VendureConfig = {
             route: 'admin',
             port: 3002,
         }),
-        BraintreePlugin
+        BraintreePlugin,
+        SwissQrInvoicePlugin
     ]
 };
 
