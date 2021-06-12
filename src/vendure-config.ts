@@ -12,6 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import { BraintreePlugin } from './plugins/braintree/braintree-plugin';
 import { SwissQrInvoicePlugin } from './plugins/swiss-qr-invoice/swiss-qr-invoice-plugin';
+import { sendInvoiceHandlers } from './payment-email-handler';
 
 export const config: VendureConfig = {
     apiOptions: {
@@ -60,7 +61,9 @@ export const config: VendureConfig = {
         DefaultJobQueuePlugin,
         DefaultSearchPlugin,
         EmailPlugin.init({
-            handlers: defaultEmailHandlers,
+            // handlers: defaultEmailHandlers,
+            // handlers: sendInvoiceHandlers,
+            handlers: defaultEmailHandlers.concat(sendInvoiceHandlers),
             templatePath: path.join(__dirname, '../static/email/templates'),
             globalTemplateVars: {
                 // The following variables will change depending on your storefront implementation
