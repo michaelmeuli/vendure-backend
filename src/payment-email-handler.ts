@@ -285,7 +285,7 @@ export const testAttachmentHandler = new EmailEventListener('send-invoice')
     })
     .setRecipient(event => event.order.customer!.emailAddress)
     .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
-    .setSubject(`Rechnung für Bestellung #{{ event.order.code }}`)
+    .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order }));
 
 export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [testAttachmentHandler];
