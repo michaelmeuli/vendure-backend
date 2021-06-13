@@ -12,34 +12,42 @@ import {
 import { EmailEventHandler } from '@vendure/email-plugin';
 import { EmailEventListener } from '@vendure/email-plugin';
 
+const fs = require('fs');
 const SwissQRBill = require('swissqrbill');
 
 export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
     .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
-    .setAttachments(async event => {
+    .loadData(async context => {
+        console.log('Customer: ', context.event.order.customer)
         const data = {
             currency: 'CHF',
-            amount: event.order.totalWithTax,
-            additionalInformation: event.order.code,
+            amount: context.event.order.totalWithTax,
+            additionalInformation: context.event.order.code,
             creditor: {
-                name: 'SwissQRBill',
-                address: 'Bahnhofstrasse 7',
-                zip: 1234,
-                city: 'Musterstadt',
-                account: 'CH4431999123000889012',
+                name: 'Meuli Michael u/o Jessica',
+                address: 'Sonnenhaldenstrasse 5',
+                zip: 8360,
+                city: 'Wallenwil',
+                account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
             },
             debtor: {
-                name: event.order.customer?.firstName.concat(' ', event.order.customer?.lastName),
-                address: event.order.customer?.addresses[0].streetLine1,
-                zip: event.order.customer?.addresses[0].postalCode,
-                city: event.order.customer?.addresses[0].city,
-                country: event.order.customer?.addresses[0].country,
+                name: 'Michael Meuli',
+                address: 'Sonstirgendwo',
+                zip: '7777777',
+                city: 'Heaven',
+                country: 'XX',
+
+                // name: context.event.order.customer?.firstName.concat(' ', context.event.order.customer?.lastName),
+                // address: context.event.order.customer?.addresses[0].streetLine1,
+                // zip: context.event.order.customer?.addresses[0].postalCode,
+                // city: context.event.order.customer?.addresses[0].city,
+                // country: context.event.order.customer?.addresses[0].country,
             },
         };
 
-        const pdf = new SwissQRBill.PDF(data, 'complete-qr-bill.pdf', { autoGenerate: false, size: 'A4' });
+        const pdf = new SwissQRBill.PDF(data, '/home/michael/test.pdf', { autoGenerate: false, size: 'A4' });
 
         //-- Add creditor address
 
@@ -251,19 +259,14 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         };
 
         pdf.addTable(table);
-
-        //-- Add QR slip
-
         pdf.addQRBill();
-
-        //-- Finalize the document
-
         pdf.end();
-
+    })
+    .setAttachments(async event => {
         return [
             {
                 filename: 'complete-qr-bill.pdf',
-                path: pdf,
+                path: '/home/michael/test.pdf',
             },
         ];
     })
@@ -288,4 +291,4 @@ export const testAttachmentHandler = new EmailEventListener('send-invoice')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order }));
 
-export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [testAttachmentHandler];
+export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [sendInvoiceHandler];
