@@ -16,10 +16,7 @@ const SwissQRBill = require('swissqrbill');
 
 export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
-    .filter(event => {
-        console.log('Event method: ', event.payment.method);
-        return event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice'; // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
-    })
+    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .setAttachments(async event => {
         const data = {
             currency: 'CHF',
@@ -275,4 +272,20 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order }));
 
-export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [sendInvoiceHandler];
+export const testAttachmentHandler = new EmailEventListener('send-invoice')
+    .on(PaymentStateTransitionEvent)
+    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
+    .setAttachments(async event => {
+        return [
+            {
+                filename: `Rechnung-${event.order.code}.pdf`,
+                path: '/home/michael/Dokumente/Adresse.pdf',
+            },
+        ];
+    })
+    .setRecipient(event => event.order.customer!.emailAddress)
+    .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
+    .setSubject(`Rechnung für Bestellung #{{ event.order.code }}`)
+    .setTemplateVars(event => ({ order: event.order }));
+
+export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [testAttachmentHandler];
