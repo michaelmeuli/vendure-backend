@@ -13,13 +13,17 @@ import { EmailEventHandler } from '@vendure/email-plugin';
 import { EmailEventListener } from '@vendure/email-plugin';
 
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const SwissQRBill = require('swissqrbill');
+
+let dir_home = os.homedir();
 
 export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
     .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .loadData(async context => {
-        console.log('Customer: ', context.event.order.customer)
+        console.log('Customer: ', context.event.order.customer);
         const data = {
             currency: 'CHF',
             amount: context.event.order.totalWithTax,
@@ -47,7 +51,12 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
             },
         };
 
-        const pdf = new SwissQRBill.PDF(data, '/home/michael/test.pdf', { autoGenerate: false, size: 'A4' });
+        let path_invoice_dir = path.join(dir_home, 'vendure-invoices');
+        fs.mkdir(path_invoice_dir, { recursive: true }, function (err: any) {
+            if (err) console.log(err);
+        });
+        let path_invoice_file = path.join(dir_home, 'vendure-invoices', context.event.order.code+'.pdf');
+        const pdf = new SwissQRBill.PDF(data, path_invoice_file, { autoGenerate: false, size: 'A4' });
 
         //-- Add creditor address
 
@@ -263,10 +272,11 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         pdf.end();
     })
     .setAttachments(async event => {
+        let path_invoice_file = path.join(dir_home, 'vendure-invoices', event.order.code+'.pdf');
         return [
             {
-                filename: 'complete-qr-bill.pdf',
-                path: '/home/michael/test.pdf',
+                filename: event.order.code+'.pdf',
+                path: path_invoice_file,
             },
         ];
     })
