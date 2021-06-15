@@ -37,7 +37,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 country: 'CH',
             },
             debtor: {
-                name: 'Michael Meuli',
+                name: context.event.order.customer?.firstName.concat(' ', context.event.order.customer?.lastName),
                 address: 'Sonstirgendwo',
                 zip: '7777777',
                 city: 'Heaven',
