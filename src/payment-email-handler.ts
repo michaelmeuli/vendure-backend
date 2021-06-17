@@ -37,8 +37,8 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 country: 'CH',
             },
             debtor: {
-                name: context.event.order.customer?.firstName.concat(' ', context.event.order.customer?.lastName),
-                address:  context.event.order.shippingAddress.streetLine1,
+                name: context.event.order.shippingAddress.fullName,
+                address: context.event.order.shippingAddress.streetLine1,
                 zip: context.event.order.shippingAddress.postalCode,
                 city: context.event.order.shippingAddress.city,
                 country: context.event.order.shippingAddress.countryCode,
@@ -49,7 +49,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         fs.mkdir(path_invoice_dir, { recursive: true }, function (err: any) {
             if (err) console.log(err);
         });
-        let path_invoice_file = path.join(dir_home, 'vendure-invoices', context.event.order.code+'.pdf');
+        let path_invoice_file = path.join(dir_home, 'vendure-invoices', context.event.order.code + '.pdf');
         const pdf = new SwissQRBill.PDF(data, path_invoice_file, { autoGenerate: false, size: 'A4' });
 
         //-- Add creditor address
@@ -266,10 +266,10 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         pdf.end();
     })
     .setAttachments(async event => {
-        let path_invoice_file = path.join(dir_home, 'vendure-invoices', event.order.code+'.pdf');
+        let path_invoice_file = path.join(dir_home, 'vendure-invoices', event.order.code + '.pdf');
         return [
             {
-                filename: event.order.code+'.pdf',
+                filename: event.order.code + '.pdf',
                 path: path_invoice_file,
             },
         ];
