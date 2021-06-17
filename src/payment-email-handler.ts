@@ -23,7 +23,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
     .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .loadData(async context => {
-        console.log('Customer: ', context.event.order.customer);
+        console.log('Order: ', context.event.order);
         const data = {
             currency: 'CHF',
             amount: context.event.order.totalWithTax,
@@ -38,16 +38,10 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
             },
             debtor: {
                 name: context.event.order.customer?.firstName.concat(' ', context.event.order.customer?.lastName),
-                address: 'Sonstirgendwo',
-                zip: '7777777',
-                city: 'Heaven',
-                country: 'XX',
-
-                // name: context.event.order.customer?.firstName.concat(' ', context.event.order.customer?.lastName),
-                // address: context.event.order.customer?.addresses[0].streetLine1,
-                // zip: context.event.order.customer?.addresses[0].postalCode,
-                // city: context.event.order.customer?.addresses[0].city,
-                // country: context.event.order.customer?.addresses[0].country,
+                address:  context.event.order.shippingAddress.streetLine1,
+                zip: context.event.order.shippingAddress.postalCode,
+                city: context.event.order.shippingAddress.city,
+                country: context.event.order.shippingAddress.countryCode,
             },
         };
 

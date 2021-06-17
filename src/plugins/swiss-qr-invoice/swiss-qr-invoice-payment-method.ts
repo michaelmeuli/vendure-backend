@@ -18,7 +18,7 @@ export const swissQrInvoice = new PaymentMethodHandler({
 
     settlePayment() {
         return {
-            success: false,
+            success: true,
         };
     },
 
