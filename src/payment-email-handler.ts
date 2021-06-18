@@ -35,6 +35,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 city: 'Wallenwil',
                 account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
+                mwst: 'MWST Nr.: CHE-154.780.687MWST'
             },
             debtor: {
                 name: context.event.order.shippingAddress.fullName,
@@ -64,7 +65,9 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 '\n' +
                 data.creditor.zip +
                 ' ' +
-                data.creditor.city,
+                data.creditor.city +
+                '\n' +
+                data.creditor.mwst,
             SwissQRBill.utils.mmToPoints(20),
             SwissQRBill.utils.mmToPoints(35),
             {
