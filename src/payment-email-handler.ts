@@ -23,7 +23,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
     .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .loadData(async context => {
-        console.log('Order: ', context.event.order);
+        console.log('Order: ', context.event.order.lines[0].featuredAsset);
         const data = {
             currency: 'CHF',
             amount: context.event.order.totalWithTax,
