@@ -97,7 +97,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         pdf.fontSize(14);
         pdf.font('Helvetica-Bold');
         pdf.text(
-            'Rechnung Nr. 1071672',
+            'Rechnung zur Bestellung: ' + context.event.order.code,
             SwissQRBill.utils.mmToPoints(20),
             SwissQRBill.utils.mmToPoints(100),
             {
@@ -110,7 +110,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
 
         pdf.fontSize(11);
         pdf.font('Helvetica');
-        pdf.text('Musterstadt ' + date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear(), {
+        pdf.text('Wallenwil ' + date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear(), {
             width: SwissQRBill.utils.mmToPoints(170),
             align: 'right',
         });
