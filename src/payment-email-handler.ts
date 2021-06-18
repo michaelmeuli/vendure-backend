@@ -29,7 +29,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
             amount: context.event.order.totalWithTax,
             additionalInformation: context.event.order.code,
             creditor: {
-                name: 'Meuli Michael u/o Jessica',
+                name: 'Jessica Meuli',
                 address: 'Sonnenhaldenstrasse 5',
                 zip: 8360,
                 city: 'Wallenwil',
