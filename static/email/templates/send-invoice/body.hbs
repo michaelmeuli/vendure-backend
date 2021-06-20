@@ -108,13 +108,13 @@
                 </tr>
             {{/each}}
             <tr class="order-row">
-                <td colspan="3">Sub-total:</td>
+                <td colspan="3">Summe:</td>
                 <td>${{ formatMoney order.subTotalWithTax }}</td>
             </tr>
-            {{#each shippingMethods }}
+            {{#each order.shippingLines }}
             <tr class="order-row">
-                <td colspan="3">Shipping ({{ name }}):</td>
-                <td>${{ formatMoney priceWithTax }}</td>
+                <td colspan="3">Versand:</td>
+                <td>${{ formatMoney price }}</td>
             </tr>
             {{/each}}
             <tr class="order-row total-row">
