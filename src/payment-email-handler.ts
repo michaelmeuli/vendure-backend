@@ -18,12 +18,13 @@ const path = require('path');
 const SwissQRBill = require('swissqrbill');
 
 let dir_home = os.homedir();
+const date = new Date();
 
 export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
-    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
+    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice' && !!event.order.customer) // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .loadData(async context => {
-        console.log('Order: ', context.event.order.lines[0].featuredAsset);
+        console.log('Order: ', context.event);
         const data = {
             currency: 'CHF',
             amount: context.event.order.totalWithTax,
@@ -105,8 +106,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 align: 'left',
             },
         );
-
-        const date = new Date();
 
         pdf.fontSize(11);
         pdf.font('Helvetica');
@@ -280,22 +279,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .setRecipient(event => event.order.customer!.emailAddress)
     .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
-    .setTemplateVars(event => ({ order: event.order }));
+    .setTemplateVars(event => ({ order: event.order, date: date }));
 
-export const testAttachmentHandler = new EmailEventListener('send-invoice')
-    .on(PaymentStateTransitionEvent)
-    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice') // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
-    .setAttachments(async event => {
-        return [
-            {
-                filename: `Rechnung-${event.order.code}.pdf`,
-                path: '/home/michael/Dokumente/Adresse.pdf',
-            },
-        ];
-    })
-    .setRecipient(event => event.order.customer!.emailAddress)
-    .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
-    .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
-    .setTemplateVars(event => ({ order: event.order }));
 
 export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [sendInvoiceHandler];

@@ -52,12 +52,12 @@
 
 <mj-section css-class="callout">
     <mj-column>
-        <mj-text css-class="callout-large"><strong>Order Code</strong></mj-text>
+        <mj-text css-class="callout-large"><strong>Bestellnummer</strong></mj-text>
         <mj-text css-class="callout-small">{{ order.code }}</mj-text>
     </mj-column>
     <mj-column>
-        <mj-text css-class="callout-large"><strong>Order Date</strong></mj-text>
-        <mj-text css-class="callout-small">{{ formatDate order.orderPlacedAt }}</mj-text>
+        <mj-text css-class="callout-large"><strong>Bestelldatum</strong></mj-text>
+        <mj-text css-class="callout-small">{{ formatDate date }}</mj-text>
     </mj-column>
     <mj-column>
         <mj-text css-class="callout-large"><strong>Total Price</strong></mj-text>
@@ -94,14 +94,9 @@
         <mj-table cellpadding="6px">
             {{#each order.lines }}
                 <tr class="order-row">
-                    <td>
-                        <img alt="{{ productVariant.name }}"
-                             style="width: 50px; height: 50px;"
-                             src="{{ featuredAsset.preview }}?w=50&h=50" />
-                    </td>
                     <td>{{ quantity }} x {{ productVariant.name }}</td>
                     <td>{{ productVariant.quantity }}</td>
-                    <td>${{ formatMoney discountedLinePriceWithTax }}</td>
+                    <td>{{ formatMoney discountedLinePriceWithTax }} CHF</td>
                 </tr>
             {{/each}}
             {{#each order.discounts }}
