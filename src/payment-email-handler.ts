@@ -32,7 +32,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         console.log('Order: ', context.event);
         const data = {
             currency: 'CHF',
-            amount: context.event.order.totalWithTax,
+            amount: context.event.order.totalWithTax/100,
             additionalInformation: context.event.order.code,
             creditor: {
                 name: 'Jessica Meuli',
@@ -182,50 +182,10 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             width: SwissQRBill.utils.mmToPoints(20),
                         },
                         {
-                            text: 'Summe',
-                            font: 'Helvetica-Bold',
+                            text: 'Versandkosten',
                         },
                         {
-                            text: "CHF 2'420.00",
-                            font: 'Helvetica-Bold',
-                            width: SwissQRBill.utils.mmToPoints(30),
-                        },
-                    ],
-                },
-                {
-                    columns: [
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: 'MwSt.',
-                        },
-                        {
-                            text: '7.7%',
-                            width: SwissQRBill.utils.mmToPoints(30),
-                        },
-                    ],
-                },
-                {
-                    columns: [
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: 'MwSt. Betrag',
-                        },
-                        {
-                            text: 'CHF 186.35',
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(context.event.order.shippingWithTax/100),
                             width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],
@@ -246,9 +206,47 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             font: 'Helvetica-Bold',
                         },
                         {
-                            text: "CHF 2'606.35",
-                            width: SwissQRBill.utils.mmToPoints(30),
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(context.event.order.totalWithTax/100), 
                             font: 'Helvetica-Bold',
+                            width: SwissQRBill.utils.mmToPoints(30),
+                        },
+                    ],
+                },
+                {
+                    columns: [
+                        {
+                            text: '',
+                            width: SwissQRBill.utils.mmToPoints(20),
+                        },
+                        {
+                            text: '',
+                            width: SwissQRBill.utils.mmToPoints(20),
+                        },
+                        {
+                            text: '',
+                        },
+                        {
+                            text: '',
+                            width: SwissQRBill.utils.mmToPoints(30),
+                        },
+                    ],
+                },
+                {
+                    columns: [
+                        {
+                            text: '',
+                            width: SwissQRBill.utils.mmToPoints(20),
+                        },
+                        {
+                            text: '',
+                            width: SwissQRBill.utils.mmToPoints(20),
+                        },
+                        {
+                            text: 'Gesamtbetrag enthält folgende Mehrwertsteuer (7.70%):',
+                        },
+                        {
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format((context.event.order.totalWithTax-context.event.order.total)/100),
+                            width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],
                 },
