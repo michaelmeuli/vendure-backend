@@ -22,7 +22,12 @@ const date = new Date();
 
 export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .on(PaymentStateTransitionEvent)
-    .filter(event => event.toState === 'Authorized' && event.payment.method === 'swissqrinvoice' && !!event.order.customer) // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
+    .filter(
+        event =>
+            event.toState === 'Authorized' &&
+            event.payment.method === 'swissqrinvoice' &&
+            !!event.order.customer,
+    ) // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
     .loadData(async context => {
         console.log('Order: ', context.event);
         const data = {
@@ -36,7 +41,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 city: 'Wallenwil',
                 account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
-                mwst: 'MWST Nr.: CHE-154.780.687MWST'
+                mwst: 'MWST Nr.: CHE-154.780.687MWST',
             },
             debtor: {
                 name: context.event.order.shippingAddress.fullName,
@@ -116,6 +121,30 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
 
         //-- Add table
 
+        const orderlines = [];
+        context.event.order.lines;
+        for (let [i, v] of context.event.order.lines.entries()) {
+            orderlines.push({
+                columns: [
+                    {
+                        text: i+1,
+                        width: SwissQRBill.utils.mmToPoints(20),
+                    },
+                    {
+                        text: v.quantity,
+                        width: SwissQRBill.utils.mmToPoints(20),
+                    },
+                    {
+                        text: v.productVariant.name,
+                    },
+                    {
+                        text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(v.linePriceWithTax/100),
+                        width: SwissQRBill.utils.mmToPoints(30),
+                    },
+                ],
+            });
+        }
+
         const table = {
             width: SwissQRBill.utils.mmToPoints(170),
             rows: [
@@ -140,44 +169,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                         },
                     ],
                 },
-                {
-                    columns: [
-                        {
-                            text: '1',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '14 Std.',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: 'Programmierung SwissQRBill',
-                        },
-                        {
-                            text: "CHF 1'540.00",
-                            width: SwissQRBill.utils.mmToPoints(30),
-                        },
-                    ],
-                },
-                {
-                    columns: [
-                        {
-                            text: '2',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '8 Std.',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: 'Dokumentation',
-                        },
-                        {
-                            text: 'CHF 880.00',
-                            width: SwissQRBill.utils.mmToPoints(30),
-                        },
-                    ],
-                },
+                ...orderlines,
                 {
                     height: 40,
                     columns: [
@@ -280,6 +272,5 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order, date: date }));
-
 
 export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [sendInvoiceHandler];
