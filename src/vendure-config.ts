@@ -13,6 +13,7 @@ import fs from 'fs';
 import { BraintreePlugin } from './plugins/braintree/braintree-plugin';
 import { SwissQrInvoicePlugin } from './plugins/swiss-qr-invoice/swiss-qr-invoice-plugin';
 import { sendInvoiceHandlers } from './payment-email-handler';
+import { shippingCalculator } from './shipping-calculator';
 
 export const config: VendureConfig = {
     apiOptions: {
@@ -48,6 +49,9 @@ export const config: VendureConfig = {
         username: 'postgres',
         password: <string>process.env.DB_PASSWORD,
         migrations: [getMigrationsPath()],
+    },
+    shippingOptions: {
+        shippingCalculators: [shippingCalculator],
     },
     paymentOptions: {
         paymentMethodHandlers: [dummyPaymentHandler],
