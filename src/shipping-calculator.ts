@@ -45,7 +45,7 @@ export const shippingCalculator = new ShippingCalculator({
         return {
             price: args.rate,
             taxRate: args.taxRate,
-            priceIncludesTax: getPriceIncludesTax(ctx, args.includesTax as any),
+            priceIncludesTax: getPriceIncludesTax(args.includesTax as any),
         };
     },
 });
