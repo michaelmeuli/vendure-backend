@@ -1,13 +1,9 @@
 import { LanguageCode } from '@vendure/common/lib/generated-types';
-
-import { RequestContext } from '@vendure/core';
-
 import { ShippingCalculator } from '@vendure/core';
 
 enum TaxSetting {
     include = 'include',
     exclude = 'exclude',
-    auto = 'auto',
 }
 
 export const shippingCalculator = new ShippingCalculator({
@@ -22,7 +18,7 @@ export const shippingCalculator = new ShippingCalculator({
         },
         includesTax: {
             type: 'string',
-            defaultValue: TaxSetting.auto,
+            defaultValue: TaxSetting.include,
             ui: {
                 component: 'select-form-input',
                 options: [
@@ -33,10 +29,6 @@ export const shippingCalculator = new ShippingCalculator({
                     {
                         label: [{ languageCode: LanguageCode.en, value: 'Excludes tax' }],
                         value: TaxSetting.exclude,
-                    },
-                    {
-                        label: [{ languageCode: LanguageCode.en, value: 'Auto (based on Channel)' }],
-                        value: TaxSetting.auto,
                     },
                 ],
             },
@@ -58,10 +50,8 @@ export const shippingCalculator = new ShippingCalculator({
     },
 });
 
-function getPriceIncludesTax(ctx: RequestContext, setting: TaxSetting): boolean {
+function getPriceIncludesTax(setting: TaxSetting): boolean {
     switch (setting) {
-        case TaxSetting.auto:
-            return ctx.channel.pricesIncludeTax;
         case TaxSetting.exclude:
             return false;
         case TaxSetting.include:
