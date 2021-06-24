@@ -4,7 +4,7 @@ import {
     DefaultSearchPlugin,
     VendureConfig,
 } from '@vendure/core';
-import { defaultEmailHandlers, EmailPlugin } from '@vendure/email-plugin';
+import { EmailPlugin } from '@vendure/email-plugin';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
@@ -12,7 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import { BraintreePlugin } from './plugins/braintree/braintree-plugin';
 import { SwissQrInvoicePlugin } from './plugins/swiss-qr-invoice/swiss-qr-invoice-plugin';
-import { sendInvoiceHandlers } from './payment-email-handler';
+import { emailHandlers } from './email-handlers';
 import { shippingCalculator } from './shipping-calculator';
 
 export const config: VendureConfig = {
@@ -67,7 +67,7 @@ export const config: VendureConfig = {
         EmailPlugin.init({
             // handlers: defaultEmailHandlers,
             // handlers: sendInvoiceHandlers,
-            handlers: defaultEmailHandlers.concat(sendInvoiceHandlers),
+            handlers: emailHandlers,
             templatePath: path.join(__dirname, '../static/email/templates'),
             globalTemplateVars: {
                 // The following variables will change depending on your storefront implementation
