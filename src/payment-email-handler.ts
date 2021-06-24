@@ -1,14 +1,4 @@
-import {
-    AccountRegistrationEvent,
-    IdentifierChangeRequestEvent,
-    NativeAuthenticationMethod,
-    OrderStateTransitionEvent,
-    PasswordResetEvent,
-    ShippingMethod,
-    TransactionalConnection,
-    PaymentStateTransitionEvent,
-} from '@vendure/core';
-
+import { PaymentStateTransitionEvent } from '@vendure/core';
 import { EmailEventHandler } from '@vendure/email-plugin';
 import { EmailEventListener } from '@vendure/email-plugin';
 
@@ -27,12 +17,12 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
             event.toState === 'Authorized' &&
             event.payment.method === 'swissqrinvoice' &&
             !!event.order.customer,
-    ) // this.code in payment-method-handler.ts via super(config) (config: PaymentMethodConfigOptions<T>) (interface PaymentMethodConfigOptions<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T>)
+    )
     .loadData(async context => {
-        console.log('Order: ', context.event);
+        const taxIncluded = (context.event.order.totalWithTax - context.event.order.total) / 100;
         const data = {
             currency: 'CHF',
-            amount: context.event.order.totalWithTax/100,
+            amount: context.event.order.totalWithTax / 100,
             additionalInformation: context.event.order.code,
             creditor: {
                 name: 'Jessica Meuli',
@@ -60,7 +50,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         const pdf = new SwissQRBill.PDF(data, path_invoice_file, { autoGenerate: false, size: 'A4' });
 
         //-- Add creditor address
-
         pdf.fontSize(12);
         pdf.fillColor('black');
         pdf.font('Helvetica');
@@ -84,7 +73,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         );
 
         //-- Add debtor address
-
         pdf.fontSize(12);
         pdf.font('Helvetica');
         pdf.text(
@@ -99,7 +87,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         );
 
         //-- Add title
-
         pdf.fontSize(14);
         pdf.font('Helvetica-Bold');
         pdf.text(
@@ -111,7 +98,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 align: 'left',
             },
         );
-
         pdf.fontSize(11);
         pdf.font('Helvetica');
         pdf.text('Wallenwil ' + date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear(), {
@@ -120,14 +106,13 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
         });
 
         //-- Add table
-
         const orderlines = [];
         context.event.order.lines;
         for (let [i, v] of context.event.order.lines.entries()) {
             orderlines.push({
                 columns: [
                     {
-                        text: i+1,
+                        text: i + 1,
                         width: SwissQRBill.utils.mmToPoints(20),
                     },
                     {
@@ -138,13 +123,14 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                         text: v.productVariant.name,
                     },
                     {
-                        text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(v.linePriceWithTax/100),
+                        text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+                            v.linePriceWithTax / 100,
+                        ),
                         width: SwissQRBill.utils.mmToPoints(30),
                     },
                 ],
             });
         }
-
         const table = {
             width: SwissQRBill.utils.mmToPoints(170),
             rows: [
@@ -185,7 +171,9 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             text: 'Versandkosten',
                         },
                         {
-                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(context.event.order.shippingWithTax/100),
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+                                context.event.order.shippingWithTax / 100,
+                            ),
                             width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],
@@ -206,27 +194,10 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             font: 'Helvetica-Bold',
                         },
                         {
-                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(context.event.order.totalWithTax/100), 
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+                                context.event.order.totalWithTax / 100,
+                            ),
                             font: 'Helvetica-Bold',
-                            width: SwissQRBill.utils.mmToPoints(30),
-                        },
-                    ],
-                },
-                {
-                    columns: [
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '',
-                            width: SwissQRBill.utils.mmToPoints(20),
-                        },
-                        {
-                            text: '',
-                        },
-                        {
-                            text: '',
                             width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],
@@ -245,17 +216,20 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             text: 'Gesamtbetrag enthält folgende Mehrwertsteuer (7.70%):',
                         },
                         {
-                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format((context.event.order.totalWithTax-context.event.order.total)/100),
+                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
+                                taxIncluded,
+                            ),
                             width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],
                 },
             ],
         };
-
         pdf.addTable(table);
+
         pdf.addQRBill();
         pdf.end();
+        return { taxIncluded };
     })
     .setAttachments(async event => {
         let path_invoice_file = path.join(dir_home, 'vendure-invoices', event.order.code + '.pdf');
@@ -269,6 +243,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .setRecipient(event => event.order.customer!.emailAddress)
     .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
-    .setTemplateVars(event => ({ order: event.order, date: date }));
+    .setTemplateVars(event => ({ order: event.order, date: date, taxIncluded: event.data.taxIncluded }));
 
 export const sendInvoiceHandlers: Array<EmailEventHandler<any, any>> = [sendInvoiceHandler];
