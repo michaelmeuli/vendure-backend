@@ -255,7 +255,6 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order, date: date, taxIncluded: event.data.taxIncluded }));
 
-
 export const orderConfirmationHandler = new EmailEventListener('order-confirmation')
     .on(OrderStateTransitionEvent)
     .filter(
@@ -284,7 +283,7 @@ export const orderConfirmationHandler = new EmailEventListener('order-confirmati
     })
     .setRecipient(event => event.order.customer!.emailAddress)
     .setFrom(`{{ fromAddress }}`)
-    .setSubject(`Order confirmation for #{{ order.code }}`)
+    .setSubject(`Bestellbestätigung für #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order, shippingMethods: event.data.shippingMethods }));
 
 export const emailVerificationHandler = new EmailEventListener('email-verification')
@@ -322,6 +321,7 @@ export const emailAddressChangeHandler = new EmailEventListener('email-address-c
     }));
 
 export const emailHandlers: Array<EmailEventHandler<any, any>> = [
+    sendInvoiceHandler,
     orderConfirmationHandler,
     emailVerificationHandler,
     passwordResetHandler,

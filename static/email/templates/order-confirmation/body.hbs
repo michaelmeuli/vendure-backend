@@ -1,4 +1,4 @@
-{{> header title="Order Receipt" }}
+{{> header title="Bestellbestätigung" }}
 
 <mj-raw>
     <style type="text/css">
@@ -41,10 +41,10 @@
 <mj-section css-class="bg-off-white">
     <mj-column>
         <mj-text>
-            Dear {{ order.customer.firstName }} {{ order.customer.lastName }},
+            Sehr geehrte*r {{ order.customer.firstName }} {{ order.customer.lastName }},
         </mj-text>
         <mj-text>
-            Thank you for your order!
+            Vielen Dank für die Bestellung!
         </mj-text>
     </mj-column>
 </mj-section>
@@ -52,16 +52,16 @@
 
 <mj-section css-class="callout">
     <mj-column>
-        <mj-text css-class="callout-large"><strong>Order Code</strong></mj-text>
+        <mj-text css-class="callout-large"><strong>Bestellnummer</strong></mj-text>
         <mj-text css-class="callout-small">{{ order.code }}</mj-text>
     </mj-column>
     <mj-column>
-        <mj-text css-class="callout-large"><strong>Order Date</strong></mj-text>
-        <mj-text css-class="callout-small">{{ formatDate order.orderPlacedAt }}</mj-text>
+        <mj-text css-class="callout-large"><strong>Bestelldatum</strong></mj-text>
+        <mj-text css-class="callout-small">{{ formatDate date }}</mj-text>
     </mj-column>
     <mj-column>
-        <mj-text css-class="callout-large"><strong>Total Price</strong></mj-text>
-        <mj-text css-class="callout-small">${{ formatMoney order.total }}</mj-text>
+        <mj-text css-class="callout-large"><strong>Total</strong></mj-text>
+        <mj-text css-class="callout-small">{{ formatMoney order.totalWithTax }} CHF</mj-text>
     </mj-column>
 </mj-section>
 
@@ -70,16 +70,13 @@
     <mj-column>
         <mj-text>
             {{#with order.shippingAddress }}
-                <h3>Shipping To: {{ fullName }}</h3>
+                <h3>Lieferadresse: </h3>
                 <ul class="address">
-                    {{#if company}}<li>{{ company }}</li>{{/if}}
+                    {{#if fullName}}<li>{{ fullName }}</li>{{/if}}
                     {{#if streetLine1}}<li>{{ streetLine1 }}</li>{{/if}}
                     {{#if streetLine2}}<li>{{ streetLine2 }}</li>{{/if}}
-                    {{#if city}}<li>{{ city }}</li>{{/if}}
-                    {{#if province}}<li>{{ province }}</li>{{/if}}
-                    {{#if postalCode}}<li>{{ postalCode }}</li>{{/if}}
+                    {{#if postalCode}}<li>{{ postalCode }} {{ city }}</li>{{/if}}
                     {{#if country}}<li>{{ country }}</li>{{/if}}
-                    {{#if phoneNumber}}<li>{{ phoneNumber }}</li>{{/if}}
                 </ul>
             {{/with}}
         </mj-text>
@@ -89,19 +86,15 @@
 <mj-section>
     <mj-column>
         <mj-text>
-            <h3>Order Summary:</h3>
+            <h3>Bestellübersicht:</h3>
         </mj-text>
         <mj-table cellpadding="6px">
             {{#each order.lines }}
                 <tr class="order-row">
-                    <td>
-                        <img alt="{{ productVariant.name }}"
-                             style="width: 50px; height: 50px;"
-                             src="{{ featuredAsset.preview }}?w=50&h=50" />
+                    <td colspan="3">
+                        {{ quantity }} x {{ productVariant.name }}
                     </td>
-                    <td>{{ quantity }} x {{ productVariant.name }}</td>
-                    <td>{{ productVariant.quantity }}</td>
-                    <td>${{ formatMoney discountedLinePriceWithTax }}</td>
+                    <td>{{ formatMoney discountedLinePriceWithTax }} CHF</td>
                 </tr>
             {{/each}}
             {{#each order.discounts }}
@@ -109,25 +102,27 @@
                     <td colspan="3">
                         {{ description }}
                     </td>
-                    <td>${{ formatMoney amount }}</td>
+                    <td>{{ formatMoney amount }} CHF</td>
                 </tr>
             {{/each}}
             <tr class="order-row">
-                <td colspan="3">Sub-total:</td>
-                <td>${{ formatMoney order.subTotalWithTax }}</td>
+                <td colspan="3">Summe:</td>
+                <td>{{ formatMoney order.subTotalWithTax }} CHF</td>
             </tr>
-            {{#each shippingMethods }}
+            {{#each order.shippingLines }}
             <tr class="order-row">
-                <td colspan="3">Shipping ({{ name }}):</td>
-                <td>${{ formatMoney priceWithTax }}</td>
+                <td colspan="3">Versand:</td>
+                <td>{{ formatMoney priceWithTax }} CHF</td>
             </tr>
             {{/each}}
             <tr class="order-row total-row">
                 <td colspan="3">Total:</td>
-                <td>${{ formatMoney order.totalWithTax }}</td>
+                <td>{{ formatMoney order.totalWithTax }} CHF</td>
+            </tr>
+            <tr class="order-row">
+                <td colspan="3">Gesamtbetrag enthält folgende Mehrwertsteuer (7.70%):</td>
+                <td>{{ taxIncluded }} CHF</td>
             </tr>
         </mj-table>
     </mj-column>
 </mj-section>
-
-{{> footer }}
