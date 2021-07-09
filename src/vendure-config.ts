@@ -34,6 +34,10 @@ export const config: VendureConfig = {
         shopApiDebug: true,// turn this off for production
     },
     authOptions: {
+        tokenMethod: 'cookie',
+        cookieOptions: {
+          secret: process.env.COOKIE_SESSION_SECRET
+        },
         superadminCredentials: {
             identifier: <string>process.env.SUPERADMIN_IDENTIFIER,
             password: <string>process.env.SUPERADMIN_PASSWORD,
