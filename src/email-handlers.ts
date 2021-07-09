@@ -250,7 +250,8 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
             },
         ];
     })
-    .setRecipient(event => event.order.customer!.emailAddress+', yoga.lichtquelle@gmail.com')
+    .setRecipient(event => event.order.customer!.emailAddress)
+    .setOptionalAddressFields(() => ({ bcc: 'michael.meuli@gmail.com, yoga.lichtquelle@gmail.com' }))
     .setFrom('"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>')
     .setSubject(`Rechnung für Bestellung #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order, date: date, taxIncluded: event.data.taxIncluded }));
@@ -474,7 +475,8 @@ export const orderConfirmationHandler = new EmailEventListener('order-confirmati
         pdf.end();
         return { taxIncluded };
     })
-    .setRecipient(event => event.order.customer!.emailAddress+', yoga.lichtquelle@gmail.com')
+    .setRecipient(event => event.order.customer!.emailAddress)
+    .setOptionalAddressFields(() => ({ bcc: 'michael.meuli@gmail.com, yoga.lichtquelle@gmail.com' }))
     .setFrom(`{{ fromAddress }}`)
     .setSubject(`Bestellbestätigung für #{{ order.code }}`)
     .setTemplateVars(event => ({ order: event.order, date: date, taxIncluded: event.data.taxIncluded  }));
