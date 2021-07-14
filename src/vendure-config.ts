@@ -2,6 +2,7 @@ import {
     dummyPaymentHandler,
     DefaultJobQueuePlugin,
     DefaultSearchPlugin,
+    UuidIdStrategy,
     VendureConfig,
 } from '@vendure/core';
 import { EmailPlugin } from '@vendure/email-plugin';
@@ -54,6 +55,7 @@ export const config: VendureConfig = {
         password: <string>process.env.DB_PASSWORD,
         migrations: [getMigrationsPath()],
     },
+    entityIdStrategy: new UuidIdStrategy(),
     shippingOptions: {
         shippingCalculators: [shippingCalculator],
     },
