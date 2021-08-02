@@ -33,15 +33,11 @@ export const config: VendureConfig = {
         },
     },
     dbConnectionOptions: {
-        type: 'postgres',
-        synchronize: false,
+        type: 'better-sqlite3',
+        synchronize: false, // turn this off for production
         logging: false,
-        database: 'postgres',
-        host: 'localhost',
-        port: 5432,
-        username: 'postgres',
-        password: <string>process.env.DB_PASSWORD,
-        migrations: [getMigrationsPath()],
+        database: path.join(__dirname, '../vendure.sqlite'),
+        migrations: [path.join(__dirname, '../migrations/*.ts')],
     },
     entityIdStrategy: new UuidIdStrategy(),
     shippingOptions: {
