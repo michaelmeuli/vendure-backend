@@ -34,7 +34,7 @@ export const config: VendureConfig = {
     },
     dbConnectionOptions: {
         type: 'postgres',
-        synchronize: false,
+        synchronize: true,
         logging: false,
         database: 'postgres',
         host: 'localhost',
