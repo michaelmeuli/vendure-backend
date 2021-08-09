@@ -20,19 +20,7 @@ export const config: VendureConfig = {
     apiOptions: {
         port: 3000,
         adminApiPath: 'admin-api',
-        adminApiPlayground: {
-            settings: {
-                'request.credentials': 'include',
-            } as any,
-        },// turn this off for production
-        adminApiDebug: true, // turn this off for production
         shopApiPath: 'shop-api',
-        shopApiPlayground: {
-            settings: {
-                'request.credentials': 'include',
-            } as any,
-        },// turn this off for production
-        shopApiDebug: true,// turn this off for production
     },
     authOptions: {
         tokenMethod: 'cookie',
