@@ -21,6 +21,9 @@ export const config: VendureConfig = {
         port: 3000,
         adminApiPath: 'admin-api',
         shopApiPath: 'shop-api',
+        cors: {
+            "origin": "https://vigorous-swanson-b61fb2.netlify.app/"
+        }
     },
     authOptions: {
         tokenMethod: 'cookie',
