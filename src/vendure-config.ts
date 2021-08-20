@@ -78,9 +78,9 @@ export const config: VendureConfig = {
             globalTemplateVars: {
                 // The following variables will change depending on your storefront implementation
                 fromAddress: '"Yoga Lichtquelle" <no-reply@yoga-lichtquelle.ch>',
-                verifyEmailAddressUrl: 'http://localhost:4201/account/verify',
-                passwordResetUrl: 'http://localhost:4201/account/reset-password',
-                changeEmailAddressUrl: 'http://localhost:4201/account/change-email-address'
+                verifyEmailAddressUrl: 'https://shop.yoga-lichtquelle.ch/account/verify',
+                passwordResetUrl: 'https://shop.yoga-lichtquelle.ch/account/reset-password',
+                changeEmailAddressUrl: 'https://shop.yoga-lichtquelle.ch/account/change-email-address'
             },
             transport: {
                 type: 'smtp',
