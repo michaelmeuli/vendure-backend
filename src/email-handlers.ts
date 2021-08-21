@@ -41,7 +41,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 city: 'Wallenwil',
                 account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
-                mwst: 'MWST Nr.: CHE-154.780.687MWST',
+                mwst: 'MWST Nr.: CHE-154.780.687 MWST',
             },
             debtor: {
                 name: context.event.order.shippingAddress.fullName,
@@ -275,7 +275,7 @@ export const orderConfirmationHandler = new EmailEventListener('order-confirmati
                 city: 'Wallenwil',
                 account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
-                mwst: 'MWST Nr.: CHE-154.780.687MWST',
+                mwst: 'MWST Nr.: CHE-154.780.687 MWST',
             },
             debtor: {
                 name: context.event.order.shippingAddress.fullName,
@@ -492,7 +492,7 @@ export const emailVerificationHandler = new EmailEventListener('email-verificati
     })
     .setRecipient(event => event.user.identifier)
     .setFrom(`{{ fromAddress }}`)
-    .setSubject(`Please verify your email address`)
+    .setSubject(`E-Mail-Adresse bestätigen`)
     .setTemplateVars(event => ({
         verificationToken: event.user.getNativeAuthenticationMethod().verificationToken,
     }));
@@ -501,7 +501,7 @@ export const passwordResetHandler = new EmailEventListener('password-reset')
     .on(PasswordResetEvent)
     .setRecipient(event => event.user.identifier)
     .setFrom(`{{ fromAddress }}`)
-    .setSubject(`Forgotten password reset`)
+    .setSubject(`Passwort zurücksetzen`)
     .setTemplateVars(event => ({
         passwordResetToken: event.user.getNativeAuthenticationMethod().passwordResetToken,
     }));
@@ -510,7 +510,7 @@ export const emailAddressChangeHandler = new EmailEventListener('email-address-c
     .on(IdentifierChangeRequestEvent)
     .setRecipient(event => event.user.getNativeAuthenticationMethod().pendingIdentifier!)
     .setFrom(`{{ fromAddress }}`)
-    .setSubject(`Please verify your change of email address`)
+    .setSubject(`Neue E-Mail-Adresse bestätigen`)
     .setTemplateVars(event => ({
         identifierChangeToken: event.user.getNativeAuthenticationMethod().identifierChangeToken,
     }));
