@@ -41,7 +41,7 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                 city: 'Wallenwil',
                 account: 'CH14 0078 1612 4519 5200 2',
                 country: 'CH',
-                mwst: 'MWST Nr.: CHE-154.780.687 MWST',
+                mwst: 'UID: CHE-154.780.687',
             },
             debtor: {
                 name: context.event.order.shippingAddress.fullName,
@@ -223,12 +223,10 @@ export const sendInvoiceHandler = new EmailEventListener('send-invoice')
                             width: SwissQRBill.utils.mmToPoints(20),
                         },
                         {
-                            text: 'Gesamtbetrag enthält folgende Mehrwertsteuer (7.70%):',
+                            text: '',
                         },
                         {
-                            text: Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(
-                                taxIncluded,
-                            ),
+                            text: '',
                             width: SwissQRBill.utils.mmToPoints(30),
                         },
                     ],

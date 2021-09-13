@@ -74,7 +74,6 @@
                 <ul class="address">
                     {{#if fullName}}<li>{{ fullName }}</li>{{/if}}
                     {{#if streetLine1}}<li>{{ streetLine1 }}</li>{{/if}}
-                    {{#if streetLine2}}<li>{{ streetLine2 }}</li>{{/if}}
                     {{#if postalCode}}<li>{{ postalCode }} {{ city }}</li>{{/if}}
                     {{#if country}}<li>{{ country }}</li>{{/if}}
                 </ul>
@@ -118,10 +117,6 @@
             <tr class="order-row total-row">
                 <td colspan="3">Rechnungstotal:</td>
                 <td>{{ formatMoney order.totalWithTax }} CHF</td>
-            </tr>
-            <tr class="order-row">
-                <td colspan="3">Gesamtbetrag enthält folgende Mehrwertsteuer (7.70%):</td>
-                <td>{{ taxIncluded }} CHF</td>
             </tr>
         </mj-table>
     </mj-column>
