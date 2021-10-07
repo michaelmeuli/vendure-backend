@@ -23,7 +23,8 @@ export const config: VendureConfig = {
         shopApiPath: 'shop-api',
     },
     authOptions: {
-        tokenMethod: 'cookie',
+        tokenMethod: 'bearer',
+        requireVerification: false,
         cookieOptions: {
           secret: process.env.COOKIE_SESSION_SECRET
         },
